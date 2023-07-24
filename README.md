@@ -2,6 +2,9 @@
 
 A transformer model designed to learn the ground state of a Hamiltonian
 
+For a colloquial introduction to the topic, see the writeup at 
+[my blog](https://durrcommasteven.github.io/blog/transformer-quantum-states/)
+
  - `TFIM_Visualizations.ipynb` A jupyter notebook with visuals comparing transformer results to results found using DMRG
  - `TransformerWF.py` Defining the transformer model, with functions to estimate Renyi entropies and Von Neumann entropy
  - `final_DMRG_comparison.ipynb` A jupyter notebook to compute values through DMRG
