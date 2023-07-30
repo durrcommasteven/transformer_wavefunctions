@@ -295,7 +295,6 @@ class TransformerDecoder(tf.keras.Model):
 
 		This applies positional embeddings
 		"""
-
 		"""
 		Combine these into a functional model
 		"""
@@ -306,7 +305,7 @@ class TransformerDecoder(tf.keras.Model):
 			f"expected sequence length <= {self.sequence_length}, recieved length {embeddings.shape[-2]}"
 		)
 
-		argument = self.dropout_layer(
+		residual_stream = self.dropout_layer(
 			embeddings + self.positional_encodings[:embeddings.shape[-2], :]
 		)
 
@@ -314,36 +313,36 @@ class TransformerDecoder(tf.keras.Model):
 
 		for idx in range(self.decoding_reps):
 			attention_output = self.attention_layers[idx](
-				[argument, argument], mask=mask
+				[residual_stream, residual_stream], mask=mask
 			)
 
 			attention_output = self.dropout_layer(attention_output)
 
-			normalized_residual_output = self.layer_norms[idx][0](
-				argument + attention_output
+			residual_stream = self.layer_norms[idx][0](
+				residual_stream + attention_output
 			)
 
 			"""
 			Creating the feed-forward layers
 			"""
-			argument = normalized_residual_output
+			ff_argument = residual_stream
 
 			for feed_forward_layer in self.feed_forward[idx]:
-				argument = feed_forward_layer(argument)
+				ff_argument = feed_forward_layer(ff_argument)
 
-			self.dropout_layer(argument)
+			ff_argument = self.dropout_layer(ff_argument)
 
-			argument = self.layer_norms[idx][1](
-				argument + normalized_residual_output
+			residual_stream = self.layer_norms[idx][1](
+				ff_argument + residual_stream
 			)
 
 		"""
 		mapping to logits
 		"""
-		logits = self.final_layer(argument)
+		logits = self.final_layer(residual_stream)
 
 		phase = np.pi * tf.nn.softsign(
-			tf.squeeze(self.phase_layer(argument), axis=-1)
+			tf.squeeze(self.phase_layer(residual_stream), axis=-1)
 		)
 
 		return logits, phase

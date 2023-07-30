@@ -1,0 +1,1 @@
+{"num_heads": 1, "key_dim": 15, "value_dim": 15, "embedding_dim": 15, "dictionary_size": 2, "decoding_reps": 1, "width": null, "depth": 2, "sequence_length": 101}
