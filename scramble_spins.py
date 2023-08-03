@@ -2,7 +2,7 @@ import numpy as np
 """
 We would like to understand the degree to which the transformer is learning structure within states
 as opposed to memorizing. We can quantify this by invertibly scrambling each spin, and trying to learn
-the resulting wavefunction
+the resulting wavefunction.
 """
 
 def scramble(
